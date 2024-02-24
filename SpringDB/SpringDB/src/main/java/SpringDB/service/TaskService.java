@@ -35,7 +35,7 @@ public class TaskService {
 
     @TrackUserAction
     public List<Task> getAllTask() {
-        return taskRepository.findAll();
+        return taskRepository.findAll().stream().sorted(Comparator.comparing(Task::getId)).collect(Collectors.toList());
     }
 
     @TrackUserAction
@@ -45,7 +45,7 @@ public class TaskService {
     }
 
     @TrackUserAction
-    public List<Task> filterByStatus(Task.Status status) {
+    public List<Task> filterByStatus(Task.taskStatus status) {
         return taskRepository.findAll().stream()
                 .filter(task -> task.getStatus().equals(status))
                 .collect(Collectors.toList());
@@ -76,10 +76,10 @@ public class TaskService {
         Task existingTask = getTaskById(id); // Нашли задачу
         Performer performer = performerService.findPerformerById(performerId); // нашли исполнителя
         existingTask.getPerformers().add(performer); // у задачи добавили исполнителя в список исполнителей
-
-
-        return taskRepository.save(existingTask);
+        taskRepository.save(existingTask);
+        return existingTask;
     }
+
 
     @TrackUserAction
     public Task deassingPerformerToTask(Long id, Long performerId) {

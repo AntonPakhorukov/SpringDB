@@ -1,17 +1,17 @@
 package SpringDB.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "performer")
-@Setter
-@Getter
+@Table(name = "performers")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Performer {
@@ -24,5 +24,9 @@ public class Performer {
     @OneToMany
     @JoinColumn(name = "task_id")
     private List<Task> tasks;
-
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "performer_roles",
+            joinColumns = {@JoinColumn(name = "performer_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
+    private List<Role> roles;
 }

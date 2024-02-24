@@ -12,14 +12,15 @@ import java.util.List;
 @Entity
 @Setter
 @Getter
-@Table(name = "task")
+@Table(name = "tasks")
 public class Task implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private String description;
-    private Status status;
+//    @Enumerated(EnumType.STRING)
+    private taskStatus status;
     @OneToMany
     @JoinColumn(name = "performer_id")
     private List<Performer> performers;
@@ -27,7 +28,7 @@ public class Task implements Serializable {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private String date;
 
-    public enum Status {
+    public enum taskStatus {
         ToDo,
         InProgress,
         Done;
