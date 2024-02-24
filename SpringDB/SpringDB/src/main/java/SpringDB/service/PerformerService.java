@@ -1,7 +1,7 @@
 package SpringDB.service;
 
-import SpringDB.PerformerRepository;
-import SpringDB.TaskRepository;
+import SpringDB.repository.PerformerRepository;
+import SpringDB.repository.TaskRepository;
 import SpringDB.model.Performer;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package SpringDB;
+package SpringDB.controller;
 
 import SpringDB.model.Performer;
 import SpringDB.model.Task;
@@ -29,12 +29,12 @@ import java.util.List;
  */
 @RestController
 @Tag(name = "Task API")
-public class TaskController {
+public class LibraryController {
     @Autowired
     private final TaskService taskService;
 
     @Autowired
-    public TaskController(TaskService taskService) {
+    public LibraryController(TaskService taskService) {
         this.taskService = taskService;
     }
 

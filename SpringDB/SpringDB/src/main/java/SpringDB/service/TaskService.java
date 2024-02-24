@@ -1,7 +1,7 @@
 package SpringDB.service;
 
-import SpringDB.TaskRepository;
-import SpringDB.TrackUserAction;
+import SpringDB.repository.TaskRepository;
+import SpringDB.aspect.TrackUserAction;
 import SpringDB.model.Performer;
 import SpringDB.model.Task;
 import org.apache.velocity.exception.ResourceNotFoundException;

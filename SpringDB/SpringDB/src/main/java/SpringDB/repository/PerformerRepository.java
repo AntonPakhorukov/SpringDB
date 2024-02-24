@@ -1,4 +1,4 @@
-package SpringDB;
+package SpringDB.repository;
 
 import SpringDB.model.Performer;
 import org.springframework.data.jpa.repository.JpaRepository;
