@@ -1,5 +1,9 @@
 package SpringDB;
 
+import SpringDB.model.Performer;
+import SpringDB.model.Task;
+import SpringDB.service.PerformerService;
+import SpringDB.service.TaskService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

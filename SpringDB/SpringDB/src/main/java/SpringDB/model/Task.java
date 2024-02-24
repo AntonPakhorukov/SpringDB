@@ -1,5 +1,6 @@
-package SpringDB;
+package SpringDB.model;
 
+import SpringDB.model.Performer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
