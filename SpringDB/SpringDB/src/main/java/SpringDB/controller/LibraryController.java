@@ -67,14 +67,9 @@ public class LibraryController {
         return taskService.filterByStatus(status);
     }
 
-    @GetMapping("/tasks/sort")
-    public List<Task> sortById() {
-        return taskService.sortById();
-    }
-
     @PutMapping("/updateStatus/{id}")
-    public Task updateTaskByStatus(@PathVariable Long id, @RequestBody Task task) {
-        return taskService.updateTaskByStatus(id, task);
+    public Task updateStatusInTask(@PathVariable Long id, @RequestBody Task task) {
+        return taskService.updateStatusInTask(id, task);
     }
 
     @DeleteMapping("tasks/{id}")
@@ -87,7 +82,7 @@ public class LibraryController {
         return taskService.assignPerformerToTask(id, performerId);
     }
 
-//    @PutMapping("/performers/{id}/tasks/{taskId}")
+    //    @PutMapping("/performers/{id}/tasks/{taskId}")
 //    public Performer assignTaskToPerformer(@PathVariable(name = "id") Long id, @PathVariable(name = "taskId") Long taskId){
 //        return performerService.assignTaskToPerformer(id, taskId);
 //    }

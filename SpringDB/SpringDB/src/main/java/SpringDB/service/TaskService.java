@@ -52,23 +52,19 @@ public class TaskService {
     }
 
     @TrackUserAction
-    public Task updateTaskByStatus(Long id, Task task) {
-        taskRepository.findById(id).get().setStatus(task.getStatus());
-        return taskRepository.save(taskRepository.findById(id).get());
+    public Task updateStatusInTask(Long id, Task task) {
+        Task currentTask = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        currentTask.setId(task.getId());
+        currentTask.setDescription(task.getDescription());
+        currentTask.setPerformers(task.getPerformers());
+        currentTask.setDate(task.getDate());
+        currentTask.setStatus(task.getStatus());
+        return taskRepository.save(currentTask);
     }
 
     @TrackUserAction
     public void deleteTask(Long id) {
         taskRepository.deleteById(id);
-    }
-
-    @TrackUserAction
-    public List<Task> sortById() {
-        return taskRepository
-                .findAll()
-                .stream()
-                .sorted(Comparator.comparing(Task::getId))
-                .collect(Collectors.toList());
     }
 
     @TrackUserAction
