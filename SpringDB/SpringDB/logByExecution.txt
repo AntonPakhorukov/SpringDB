@@ -92,3 +92,4 @@ Method findAll was called
 Method findPerformerById was called
 Method findPerformerById was called
 Method findPerformerById was called
+Method findAll was called

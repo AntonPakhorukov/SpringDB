@@ -1,4 +1,4 @@
-package SpringDB;
+package SpringDB.service;
 
 import SpringDB.model.Performer;
 import SpringDB.model.Task;

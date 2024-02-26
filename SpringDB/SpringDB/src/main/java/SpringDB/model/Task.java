@@ -18,7 +18,7 @@ public class Task implements Serializable {
     private Long id;
     @Column(nullable = false)
     private String description;
-//    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private taskStatus status;
     @OneToMany
     @JoinColumn(name = "performer_id")
@@ -28,19 +28,6 @@ public class Task implements Serializable {
     private String date;
 
     public enum taskStatus {
-        ToDo,
-        InProgress,
-        Done;
-    }
-
-    @Override
-    public String toString() {
-        return "Task(" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                ", performers=" + performers +
-                ", date='" + date + '\'' +
-                ')';
+        ToDo, InProgress, Done;
     }
 }

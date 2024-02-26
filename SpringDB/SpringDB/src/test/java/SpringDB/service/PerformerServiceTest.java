@@ -1,4 +1,4 @@
-package SpringDB;
+package SpringDB.service;
 
 import SpringDB.model.Performer;
 import SpringDB.repository.PerformerRepository;
@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.boot.convert.PeriodFormat;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -17,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -44,27 +46,53 @@ public class PerformerServiceTest {
 
     @Test
     public void findPerformerByIdTest() {
+        Performer performer = new Performer();
+        performer.setId(1L);
+
+        when(performerRepository.findById(1L)).thenReturn(Optional.of(performer));
+
+        Performer currentPerformer = performerService.findPerformerById(1L);
+
+        assertEquals(performer, currentPerformer);
 
     }
 
     @Test
     public void saveTest() {
+        Performer performer = new Performer();
+
+        performerService.save(performer);
+
+        Mockito.verify(performerRepository, Mockito.times(1)).save(performer);
 
     }
 
     @Test
     public void updatePerformerNameTest() {
+        Performer performer = new Performer();
+        performer.setId(1L);
+        performer.setName("per_01");
+
+        when(performerRepository.findById(1L)).thenReturn(Optional.of(performer));
+
+        Performer actualNamePerf = new Performer();
+        actualNamePerf.setName("newName");
+
+        performerService.updatePerformerName(1L, actualNamePerf);
+
+        assertEquals(performer.getName(), actualNamePerf.getName());
 
     }
 
     @Test
     public void deletePerformerTest() {
-
+        performerService.deletePerformer(1L);
+        Mockito.verify(performerRepository, Mockito.times(1)).deleteById(1L);
     }
 
     @Test
     public void clearListPerformerTest() {
-
+        performerService.clearListPerformer();
+        Mockito.verify(performerRepository, times(1)).deleteAll();
     }
-
 }
