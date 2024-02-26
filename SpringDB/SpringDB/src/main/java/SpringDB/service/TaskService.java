@@ -1,9 +1,11 @@
 package SpringDB.service;
 
+import SpringDB.repository.PerformerRepository;
 import SpringDB.repository.TaskRepository;
 import SpringDB.aspect.TrackUserAction;
 import SpringDB.model.Performer;
 import SpringDB.model.Task;
+import jakarta.transaction.Transactional;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ public class TaskService {
     @Autowired
     private TaskRepository taskRepository;
     @Autowired
-    private PerformerService performerService;
+    private PerformerRepository performerRepository;
 
     @TrackUserAction
     public Task createTask(Task task) {
@@ -46,18 +48,12 @@ public class TaskService {
 
     @TrackUserAction
     public List<Task> filterByStatus(Task.taskStatus status) {
-        return taskRepository.findAll().stream()
-                .filter(task -> task.getStatus().equals(status))
-                .collect(Collectors.toList());
+        return taskRepository.filterByStatus(status);
     }
 
     @TrackUserAction
     public Task updateStatusInTask(Long id, Task task) {
-        Task currentTask = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task not found"));
-        currentTask.setId(task.getId());
-        currentTask.setDescription(task.getDescription());
-        currentTask.setPerformers(task.getPerformers());
-        currentTask.setDate(task.getDate());
+        Task currentTask = getTaskById(id);
         currentTask.setStatus(task.getStatus());
         return taskRepository.save(currentTask);
     }
@@ -68,12 +64,12 @@ public class TaskService {
     }
 
     @TrackUserAction
-    public Task assignPerformerToTask(Long id, Long performerId) {
-        Task existingTask = getTaskById(id); // Нашли задачу
-        Performer performer = performerService.findPerformerById(performerId); // нашли исполнителя
+    @Transactional
+    public Task assignPerformerToTask(Long taskId, Long performerId) {
+        Task existingTask = getTaskById(taskId); // Нашли задачу
+        Performer performer = performerRepository.findById(performerId).orElse(null); // нашли исполнителя
         existingTask.getPerformers().add(performer); // у задачи добавили исполнителя в список исполнителей
-        taskRepository.save(existingTask);
-        return existingTask;
+        return taskRepository.save(existingTask);
     }
 
 
@@ -81,7 +77,7 @@ public class TaskService {
     public Task deassingPerformerToTask(Long id, Long performerId) {
         Task existingTask = getTaskById(id);
         existingTask.getPerformers().removeIf(performer -> performer.getId().equals(performerId));
-        Performer performer = performerService.findPerformerById(performerId);
+        Performer performer = performerRepository.findById(performerId).orElse(null);
         return taskRepository.save(existingTask);
     }
 

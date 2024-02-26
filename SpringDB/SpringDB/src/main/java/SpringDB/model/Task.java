@@ -1,6 +1,5 @@
 package SpringDB.model;
 
-import SpringDB.model.Performer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,5 +31,16 @@ public class Task implements Serializable {
         ToDo,
         InProgress,
         Done;
+    }
+
+    @Override
+    public String toString() {
+        return "Task(" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", performers=" + performers +
+                ", date='" + date + '\'' +
+                ')';
     }
 }

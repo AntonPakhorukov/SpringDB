@@ -1,7 +1,10 @@
 package SpringDB;
 
+import SpringDB.model.Performer;
 import SpringDB.model.Task;
+import SpringDB.repository.PerformerRepository;
 import SpringDB.repository.TaskRepository;
+import SpringDB.service.PerformerService;
 import SpringDB.service.TaskService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +16,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +31,8 @@ public class TaskServiceTest {
     private TaskService taskService;
     @Mock
     private TaskRepository taskRepository;
+    @Mock
+    private PerformerRepository performerRepository;
 
     @BeforeEach
     public void setup() {
@@ -41,73 +48,97 @@ public class TaskServiceTest {
 
     @Test
     public void getAllTasksTest() {
-        taskService.createTask(new Task());
-        taskService.createTask(new Task());
-        List<Task> expected = taskRepository.findAll();
+        Task task1 = new Task();
+        taskRepository.save(task1);
 
-        List<Task> actualList = taskService.getAllTask();
+        List<Task> expected = Collections.singletonList(task1);
 
-        assertEquals(expected, actualList);
+        when(taskRepository.findAll()).thenReturn(expected);
+
+        List<Task> actual = taskService.getAllTask();
+
+        assertEquals(expected, actual);
     }
 
     @Test
     public void getTaskByIdTest() {
         Task task = new Task();
         task.setDescription("getTaskByIdOne");
-        taskRepository.save(task);
-
         when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
 
         Task currentTask = taskService.getTaskById(1L);
-
         assertEquals(task.getDescription(), currentTask.getDescription());
     }
 
     @Test
     public void filterByStatusTest() {
-        Task expected1 = new Task();
-        expected1.setStatus(Task.taskStatus.ToDo);
-        taskService.createTask(expected1);
-
-        Task expected2 = new Task();
-        expected1.setStatus(Task.taskStatus.ToDo);
-        taskService.createTask(expected2);
-
-        Task expected3 = new Task();
-        expected1.setStatus(Task.taskStatus.InProgress);
-        taskService.createTask(expected3);
-
-        List<Task> expected = taskRepository.filterByStatus("ToDo");
-
-        when(taskRepository.filterByStatus("ToDo")).thenReturn(expected);
-
-        List<Task> currentList = taskService.filterByStatus(Task.taskStatus.ToDo);
-
-        assertEquals(expected.size(), currentList.size());
+        Task task = new Task();
+        task.setStatus(Task.taskStatus.InProgress);
+        taskService.filterByStatus(task.getStatus());
+        Mockito.verify(taskRepository, Mockito.times(1)).filterByStatus(Task.taskStatus.InProgress);
     }
 
     @Test
-    public void updateTaskByStatus(){
+    public void updateTaskByStatus() {
         Task task = new Task();
         task.setId(1L);
-        task.setStatus(Task.taskStatus.ToDo);
-        taskService.createTask(task);
-        Task updateTask = new Task();
-        updateTask.setStatus(Task.taskStatus.InProgress);
-        taskService.updateStatusInTask(1L, updateTask);
-        assertEquals(task.getStatus(), updateTask.getStatus());
-//        Mockito.verify(taskRepository, Mockito.times(1)).updateStatusInTask("InProgress", 1L);
 
-// Не сработала, не смог разобрать причину, ПОМОГИТЕ ПОНЯТЬ))
+        Task status = new Task();
+        status.setStatus(Task.taskStatus.ToDo);
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
 
-//        Task expected = taskRepository.updateStatusInTask("InProgress", 1L);
-//
-//        Task updateTask = new Task();
-//        updateTask.setStatus(Task.taskStatus.InProgress);
-//        updateTask.setId(1L);
-//        Task currentTask = taskService.updateStatusInTask(1L, "InProgress");
-//
-//        assertEquals(expected, currentTask);
+        taskService.updateStatusInTask(1L, status);
+
+        assertEquals(task.getStatus(), status.getStatus());
+    }
+
+    @Test
+    public void deleteTaskTest() {
+        taskService.deleteTask(1L);
+        Mockito.verify(taskRepository, Mockito.times(1)).deleteById(1L);
 
     }
+
+    @Test
+    public void assignPerformerToTaskTest() {
+        Task expected = new Task();
+        expected.setId(1L);
+        taskRepository.save(expected);
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(expected));
+
+        Performer performer = new Performer();
+        performer.setId(2L);
+        performerRepository.save(performer);
+        when(performerRepository.findById(2L)).thenReturn(Optional.of(performer));
+
+        List<Performer> performers = new ArrayList<>();
+        expected.setPerformers(performers);
+
+        taskService.assignPerformerToTask(1L, 2L);
+
+        assert (expected.getPerformers().size() == 1);
+    }
+
+    @Test
+    public void deassignPerformerToTask() {
+        Task task = new Task();
+        task.setId(1L);
+        task.setPerformers(new ArrayList<>());
+        taskRepository.save(task);
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
+
+        Performer performer = new Performer();
+        performer.setId(2L);
+        performerRepository.save(performer);
+        when(performerRepository.findById(2L)).thenReturn(Optional.of(performer));
+
+        task.getPerformers().add(performer);
+
+        taskService.deassingPerformerToTask(1L, 2L);
+
+        assert (task.getPerformers().size() == 0);
+        assertEquals(taskService.getTaskById(1L), task);
+    }
+
+
 }

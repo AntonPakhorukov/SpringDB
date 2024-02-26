@@ -82,10 +82,6 @@ public class LibraryController {
         return taskService.assignPerformerToTask(id, performerId);
     }
 
-    //    @PutMapping("/performers/{id}/tasks/{taskId}")
-//    public Performer assignTaskToPerformer(@PathVariable(name = "id") Long id, @PathVariable(name = "taskId") Long taskId){
-//        return performerService.assignTaskToPerformer(id, taskId);
-//    }
     @DeleteMapping("/tasks/{id}/performers/{performerId}")
     public Task deassignPerformerToTask(@PathVariable Long id, @PathVariable Long performerId) {
         return taskService.deassingPerformerToTask(id, performerId);
